@@ -165,7 +165,7 @@ export const DELETE = withTenantContext(async (req: Request, { params }: { param
     await AuditLoggingService.logAuditEvent({
       action: AuditActionType.ROLE_DELETED,
       severity: AuditSeverity.WARNING,
-      userId: ctx.userId,
+      userId: ctx.userId ?? undefined,
       tenantId: ctx.tenantId,
       targetResourceId: params.id,
       targetResourceType: 'ROLE',
