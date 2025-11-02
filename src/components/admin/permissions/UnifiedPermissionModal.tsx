@@ -277,9 +277,105 @@ export default function UnifiedPermissionModal({
   }, [currentRole, currentPermissions])
 
   /**
+   * Validate role form
+   */
+  const validateRoleForm = (): boolean => {
+    if (!roleName.trim()) {
+      setSaveError('Role name is required')
+      return false
+    }
+    if (!roleDescription.trim()) {
+      setSaveError('Role description is required')
+      return false
+    }
+    if (selectedPermissions.length === 0) {
+      setSaveError('At least one permission must be assigned')
+      return false
+    }
+    return true
+  }
+
+  /**
    * Handle save
    */
   const handleSave = useCallback(async () => {
+    // Handle role creation/editing
+    if (isRoleForm) {
+      if (!validateRoleForm()) return
+
+      setIsSaving(true)
+      setSaveError(null)
+
+      try {
+        const roleFormData: RoleFormData = {
+          id: roleData?.id,
+          name: roleName,
+          description: roleDescription,
+          permissions: selectedPermissions,
+        }
+
+        // Log audit event
+        const userId = (session?.user as any)?.id || 'unknown'
+        const tenantId = (session?.user as any)?.tenantId || 'unknown'
+
+        if (mode === 'role-create') {
+          await AuditLoggingService.logAuditEvent({
+            action: AuditActionType.ROLE_CREATED,
+            severity: AuditSeverity.INFO,
+            userId,
+            tenantId,
+            targetResourceId: roleData?.id || 'new',
+            targetResourceType: 'ROLE',
+            description: `Created role: ${roleName}`,
+            changes: {
+              name: roleName,
+              description: roleDescription,
+              permissions: selectedPermissions,
+            },
+          })
+
+          globalEventEmitter.emit('role:created', {
+            name: roleName,
+            description: roleDescription,
+            permissions: selectedPermissions,
+            timestamp: Date.now(),
+          })
+        } else {
+          await AuditLoggingService.logAuditEvent({
+            action: AuditActionType.ROLE_UPDATED,
+            severity: AuditSeverity.INFO,
+            userId,
+            tenantId,
+            targetResourceId: roleData?.id,
+            targetResourceType: 'ROLE',
+            description: `Updated role: ${roleName}`,
+            changes: {
+              name: roleName,
+              description: roleDescription,
+              permissions: selectedPermissions,
+            },
+          })
+
+          globalEventEmitter.emit('role:updated', {
+            roleId: roleData?.id,
+            name: roleName,
+            description: roleDescription,
+            permissions: selectedPermissions,
+            timestamp: Date.now(),
+          })
+        }
+
+        await onSave(roleFormData)
+        onClose()
+      } catch (error) {
+        setSaveError(error instanceof Error ? error.message : 'Failed to save role')
+      } finally {
+        setIsSaving(false)
+      }
+      return
+    }
+
+    // Handle permission assignment for users/roles
     if (!validation.isValid) {
       setSaveError('Please resolve validation errors before saving')
       return
@@ -291,7 +387,7 @@ export default function UnifiedPermissionModal({
     try {
       const changeSet: PermissionChangeSet = {
         targetIds: Array.isArray(targetId) ? targetId : [targetId],
-        roleChange: selectedRole !== currentRole 
+        roleChange: selectedRole !== currentRole
           ? { from: currentRole!, to: selectedRole! }
           : undefined,
         permissionChanges: changeCount > 0
@@ -309,7 +405,7 @@ export default function UnifiedPermissionModal({
     } finally {
       setIsSaving(false)
     }
-  }, [validation.isValid, targetId, selectedRole, currentRole, changeCount, changes.added, changes.removed, onSave, onClose])
+  }, [isRoleForm, validation.isValid, targetId, selectedRole, currentRole, changeCount, changes.added, changes.removed, onSave, onClose, roleName, roleDescription, selectedPermissions, roleData, mode, session])
 
   // Get display name
   const displayName = targetName || (Array.isArray(targetId) ? `${targetId.length} users` : targetId)
