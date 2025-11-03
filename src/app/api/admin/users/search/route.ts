@@ -20,8 +20,8 @@ export interface UserFilterOptions {
   createdBefore?: string
   sortBy?: 'name' | 'email' | 'createdAt' | 'role'
   sortOrder?: 'asc' | 'desc'
-  page?: number
-  limit?: number
+  page: number
+  limit: number
 }
 
 export const GET = withTenantContext(async (request: NextRequest) => {
