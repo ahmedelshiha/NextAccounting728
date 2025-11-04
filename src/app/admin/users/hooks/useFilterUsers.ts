@@ -7,6 +7,8 @@ export interface FilterOptions {
   status?: string
   department?: string
   tier?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
   [key: string]: string | undefined
 }
 
@@ -14,12 +16,26 @@ export interface FilterConfig {
   searchFields?: string[]
   caseInsensitive?: boolean
   sortByDate?: boolean
+  serverSide?: boolean
+}
+
+export interface ServerFilterQuery {
+  search?: string
+  role?: string
+  status?: string
+  tier?: string
+  department?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+  page?: number
+  limit?: number
 }
 
 const DEFAULT_CONFIG: FilterConfig = {
   searchFields: ['name', 'email', 'company'],
   caseInsensitive: true,
-  sortByDate: true
+  sortByDate: true,
+  serverSide: false
 }
 
 /**
