@@ -13,6 +13,8 @@ import { ErrorBoundary } from '@/components/providers/error-boundary'
 import { TabSkeleton, DashboardTabSkeleton, MinimalTabSkeleton } from './components/TabSkeleton'
 import { toast } from 'sonner'
 import { performanceMetrics } from '@/lib/performance/metrics'
+import { isFeatureEnabled } from '@/lib/feature-flags'
+import { trackEvent } from '@/lib/analytics'
 
 // Dynamic imports for less-frequently used tabs (reduces initial bundle by ~40KB)
 const WorkflowsTab = lazy(() => import('./components/tabs/WorkflowsTab').then(m => ({ default: m.WorkflowsTab })))
