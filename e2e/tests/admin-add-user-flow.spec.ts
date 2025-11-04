@@ -2,13 +2,16 @@ import { test, expect, Page } from '@playwright/test'
 
 /**
  * E2E Tests for Admin Add User Flows
- * 
+ *
  * Tests the following scenarios:
  * 1. Add user from Dashboard quick action
- * 2. Add user from Entities tab
- * 3. Legacy /admin/clients/new route redirect
+ * 2. Role-specific user creation from Dashboard
+ * 3. Legacy route redirects to unified Dashboard
  * 4. Form validation
  * 5. Error handling
+ * 6. User role selection
+ * 7. Onboarding flag
+ * 8. Accessibility
  */
 
 test.describe('Admin Add User Flows', () => {
@@ -234,27 +237,6 @@ test.describe('Admin Add User Flows', () => {
       await expect(page.locator('text=User created successfully')).toBeVisible()
     })
 
-    test('should have legacy Entities tab add user as fallback', async () => {
-      // Navigate to entities tab if it exists
-      await page.goto('/admin/users?tab=entities')
-      await page.waitForLoadState('networkidle')
-
-      // Check if Entities tab is visible
-      const entitiesTab = page.locator('[role="tab"]:has-text("Entities")')
-      const isVisible = await entitiesTab.isVisible({ timeout: 2000 }).catch(() => false)
-
-      if (isVisible) {
-        // If Entities tab exists, it should have add user action
-        const addButton = page.locator('button:has-text("Add User"), button:has-text("Create"), button:has-text("New")')
-        if (await addButton.isVisible()) {
-          await addButton.click()
-          await expect(page.locator('[role="dialog"]')).toBeVisible()
-        }
-      } else {
-        // Entities tab is hidden (feature flag on), verify redirect happened
-        expect(page.url()).toMatch(/tab=dashboard/)
-      }
-    })
   })
 
   test.describe('Legacy Route Redirects', () => {

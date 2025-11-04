@@ -2,9 +2,8 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { isFeatureEnabled } from '@/lib/feature-flags'
 
-export type TabType = 'dashboard' | 'entities' | 'workflows' | 'bulk-operations' | 'audit' | 'rbac' | 'admin'
+export type TabType = 'dashboard' | 'workflows' | 'bulk-operations' | 'audit' | 'rbac' | 'admin'
 
 interface TabNavigationProps {
   activeTab: TabType
@@ -17,14 +16,7 @@ function getTabs(): Array<{
   icon: string
   description: string
 }> {
-  const isRetireEntitiesTabEnabled = isFeatureEnabled('retireEntitiesTab', false)
-
-  const baseTabs: Array<{
-    id: TabType
-    label: string
-    icon: string
-    description: string
-  }> = [
+  return [
     {
       id: 'dashboard',
       label: 'Dashboard',
@@ -62,17 +54,6 @@ function getTabs(): Array<{
       description: 'System configuration and templates'
     }
   ]
-
-  if (!isRetireEntitiesTabEnabled) {
-    baseTabs.splice(1, 0, {
-      id: 'entities',
-      label: 'Entities',
-      icon: '🏢',
-      description: 'Manage Clients and Team'
-    })
-  }
-
-  return baseTabs
 }
 
 /**
