@@ -21,6 +21,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useDashboardMetrics, useDashboardRecommendations, useDashboardAnalytics, useFilterUsers, useServerSideFiltering } from '../../hooks'
 import { UserItem, useUsersContext } from '../../contexts/UsersContextProvider'
+import { UserProfileDialog } from '../UserProfileDialog'
 import { toast } from 'sonner'
 
 interface ExecutiveDashboardTabProps {
