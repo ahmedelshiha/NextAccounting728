@@ -53,11 +53,11 @@ export const WorkstationSidebar = memo(function WorkstationSidebar({
             <>
               <div className="stat-item">
                 <span className="stat-label">Total Users</span>
-                <span className="stat-value">{stats.total || 0}</span>
+                <span className="stat-value">{(stats as any).total || 0}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-label">Active</span>
-                <span className="stat-value">{stats.clients + stats.staff + stats.admins || 0}</span>
+                <span className="stat-value">{((stats as any).clients || 0) + ((stats as any).staff || 0) + ((stats as any).admins || 0) || 0}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-label">Pending</span>
@@ -78,10 +78,10 @@ export const WorkstationSidebar = memo(function WorkstationSidebar({
         activeView="all"
         onViewChange={handleViewChange}
         viewCounts={{
-          all: stats?.total || 0,
-          clients: stats?.clients || 0,
-          team: (stats?.staff || 0) + (stats?.admins || 0),
-          admins: stats?.admins || 0,
+          all: (stats as any)?.total || 0,
+          clients: (stats as any)?.clients || 0,
+          team: ((stats as any)?.staff || 0) + ((stats as any)?.admins || 0),
+          admins: (stats as any)?.admins || 0,
         }}
         className="sidebar-saved-views"
       />
