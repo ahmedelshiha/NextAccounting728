@@ -69,7 +69,7 @@ export interface AnalyticsData {
   }>
 }
 
-export type TabKey = 'languages' | 'organization' | 'user-preferences' | 'regional' | 'integration' | 'translations' | 'analytics' | 'discovery'
+export type TabKey = 'languages' | 'organization' | 'user-preferences' | 'regional' | 'integration' | 'translations' | 'analytics' | 'discovery' | 'heatmap'
 
 export interface TabDefinition {
   key: TabKey
@@ -95,8 +95,6 @@ export interface LocalizationContextType {
   setMissingKeys: React.Dispatch<React.SetStateAction<MissingKey[]>>
   analyticsData: AnalyticsData | null
   setAnalyticsData: React.Dispatch<React.SetStateAction<AnalyticsData | null>>
-  loading: boolean
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>
   saving: boolean
   setSaving: React.Dispatch<React.SetStateAction<boolean>>
   saved: boolean

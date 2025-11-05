@@ -20,40 +20,63 @@ interface TrendsResponse {
 }
 
 export const AnalyticsTab: React.FC = () => {
-  const { analyticsData, setAnalyticsData, loading, setLoading } = useLocalizationContext()
+  const { analyticsData, setAnalyticsData } = useLocalizationContext()
+  const [loading, setLoading] = useState(true)
   const [trends, setTrends] = useState<TrendsResponse | null>(null)
   const [trendsLoading, setTrendsLoading] = useState(false)
 
   useEffect(() => {
-    loadAnalytics()
-    loadTrends()
+    loadAllData()
   }, [])
+
+  async function loadAllData() {
+    try {
+      setLoading(true)
+      await loadAnalytics()
+      await loadTrends()
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function loadAnalytics() {
     try {
-      setLoading(true)
-      const r = await fetch('/api/admin/user-language-analytics')
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+
+      const r = await fetch('/api/admin/user-language-analytics', { signal: controller.signal })
+      clearTimeout(timeoutId)
+
       if (r.ok) {
         const d = await r.json()
         setAnalyticsData(d.data)
       }
     } catch (e) {
       console.error('Failed to load analytics:', e)
-    } finally {
-      setLoading(false)
+      if ((e as any).name === 'AbortError') {
+        console.error('Request timed out')
+      }
     }
   }
 
   async function loadTrends() {
     try {
       setTrendsLoading(true)
-      const r = await fetch('/api/admin/user-language-analytics/trends?days=90')
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+
+      const r = await fetch('/api/admin/user-language-analytics/trends?days=90', { signal: controller.signal })
+      clearTimeout(timeoutId)
+
       if (r.ok) {
         const d = await r.json()
         setTrends(d.data)
       }
     } catch (e) {
       console.error('Failed to load trends:', e)
+      if ((e as any).name === 'AbortError') {
+        console.error('Request timed out')
+      }
     } finally {
       setTrendsLoading(false)
     }
