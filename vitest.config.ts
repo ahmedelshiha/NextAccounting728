@@ -16,7 +16,7 @@ export default defineConfig({
       ['tests/admin/integration/**/*.test.tsx', 'jsdom'],
       ['tests/admin/**/*.test.tsx', 'jsdom'],
       ['tests/components/**/*.test.tsx', 'jsdom'],
-      ['src/app/admin/users/**/*.test.tsx', 'jsdom'],
+      ['src/app/admin/users/**/*.test.{ts,tsx}', 'jsdom'],
       ['src/**/*.dom.test.tsx', 'jsdom'],
       ['**/*.dom.test.tsx', 'jsdom']
     ],
