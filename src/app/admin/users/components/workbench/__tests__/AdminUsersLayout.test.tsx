@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi, describe, it, beforeEach, expect } from 'vitest'
 import AdminUsersLayout from '../AdminUsersLayout'
-import { UsersContextProvider } from '../../contexts/UsersContextProvider'
+import { UsersContextProvider } from '../../../contexts/UsersContextProvider'
 
 // Mock Builder.io hook to prevent builder content loading
 vi.mock('@/hooks/useBuilderContent', () => ({
