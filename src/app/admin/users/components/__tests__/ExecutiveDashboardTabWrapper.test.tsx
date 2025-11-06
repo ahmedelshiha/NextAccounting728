@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { describe, it, vi, expect } from 'vitest'
 import { useAdminWorkBenchFeature } from '@/hooks/useAdminWorkBenchFeature'
 import ExecutiveDashboardTabWrapper from '../ExecutiveDashboardTabWrapper'
+import { UsersContextProvider } from '../../contexts/UsersContextProvider'
 
 // Mock the feature flag hook
 vi.mock('@/hooks/useAdminWorkBenchFeature')
