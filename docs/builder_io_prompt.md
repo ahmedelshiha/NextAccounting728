@@ -30,10 +30,12 @@ You are a senior full-stack developer tasked with implementing the **Admin Workb
 ### Before You Start
 
 1. **Read the entire transformation plan document thoroughly**
-   - Review the quick start guide: `docs/ADMIN_WORKBENCH_QUICK_START.md`
-   - Review the main roadmap: `docs/ADMIN_WORKBENCH_TRANSFORMATION_ROADMAP.MD`
-   - Review the implementation summary: `docs/ADMIN_WORKBENCH_IMPLEMENTATION_SUMMARY.md`
-   - Review the verification checklist: `docs/ADMIN_WORKBENCH_VERIFICATION.md`
+   - **📚 START HERE - Master Index:** `docs/DOCUMENTATION_INDEX.md` (Central navigation for all project docs)
+   - **📊 Project Status:** `docs/ADMIN_WORKBENCH_PROJECT_STATUS.md` (Complete status, verification results, deployment checklist)
+   - **🚀 Quick Start:** `docs/ADMIN_WORKBENCH_QUICK_START.md`
+   - **📋 Main Roadmap:** `docs/ADMIN_WORKBENCH_TRANSFORMATION_ROADMAP.MD`
+   - **🔧 Implementation Summary:** `docs/ADMIN_WORKBENCH_IMPLEMENTATION_SUMMARY.md`
+   - **✅ Verification Checklist:** `docs/ADMIN_WORKBENCH_VERIFICATION.md`
 
 2. **Understand the existing codebase**
    - Review the progress details: `docs/ADMIN_WORKBENCH_PHASE_1_5_PROGRESS.md`
