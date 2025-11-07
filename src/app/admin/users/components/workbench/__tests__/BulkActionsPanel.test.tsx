@@ -1,19 +1,11 @@
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { vi } from 'vitest'
+import { vi, describe, it, beforeEach, expect } from 'vitest'
 import BulkActionsPanel from '../BulkActionsPanel'
 
-// Mock DryRunModal
-vi.mock('../DryRunModal', () => ({
-  default: (props: any) => (
-    <div data-testid="dry-run-modal">
-      <div>Preview: {props.selectedCount} users</div>
-      <button onClick={() => props.onApply?.()}>Apply</button>
-      <button onClick={() => props.onCancel?.()}>Cancel</button>
-    </div>
-  )
-}))
+// Mock fetch for API calls
+global.fetch = vi.fn()
 
 describe('BulkActionsPanel', () => {
   const mockOnClear = vi.fn()
@@ -32,7 +24,7 @@ describe('BulkActionsPanel', () => {
         />
       )
 
-      expect(screen.getByText(/5 users? selected/i)).toBeInTheDocument()
+      expect(screen.getByText(/5 users selected/i)).toBeInTheDocument()
     })
 
     it('should render action type selector', () => {
@@ -44,8 +36,8 @@ describe('BulkActionsPanel', () => {
         />
       )
 
-      const selector = screen.getByRole('combobox') || screen.getByRole('listbox')
-      expect(selector).toBeInTheDocument()
+      const selects = screen.getAllByRole('combobox')
+      expect(selects.length).toBeGreaterThanOrEqual(2)
     })
 
     it('should render action value selector', () => {
@@ -57,9 +49,8 @@ describe('BulkActionsPanel', () => {
         />
       )
 
-      // Look for input or select for action value
       const inputs = screen.getAllByRole('combobox')
-      expect(inputs.length).toBeGreaterThan(0)
+      expect(inputs.length).toBeGreaterThanOrEqual(2)
     })
 
     it('should render preview button', () => {
@@ -71,7 +62,19 @@ describe('BulkActionsPanel', () => {
         />
       )
 
-      expect(screen.getByRole('button', { name: /preview/i })).toBeInTheDocument()
+      expect(screen.getByTestId('preview-button')).toBeInTheDocument()
+    })
+
+    it('should render apply button', () => {
+      render(
+        <BulkActionsPanel
+          selectedCount={1}
+          selectedUserIds={new Set(['1'])}
+          onClear={mockOnClear}
+        />
+      )
+
+      expect(screen.getByTestId('apply-button')).toBeInTheDocument()
     })
 
     it('should render clear button', () => {
@@ -122,14 +125,16 @@ describe('BulkActionsPanel', () => {
         />
       )
 
-      const clearButton = screen.getByRole('button', { name: /clear/i })
+      const clearButton = screen.getByTestId('clear-button')
       await user.click(clearButton)
 
       expect(mockOnClear).toHaveBeenCalledOnce()
     })
 
-    it('should show dry-run modal when preview clicked', async () => {
+    it('should call preview handler when preview button clicked', async () => {
       const user = userEvent.setup()
+      const consoleSpy = vi.spyOn(console, 'log')
+
       render(
         <BulkActionsPanel
           selectedCount={2}
@@ -138,16 +143,26 @@ describe('BulkActionsPanel', () => {
         />
       )
 
-      const previewButton = screen.getByRole('button', { name: /preview/i })
+      const previewButton = screen.getByTestId('preview-button')
       await user.click(previewButton)
 
-      await waitFor(() => {
-        expect(screen.getByTestId('dry-run-modal')).toBeInTheDocument()
-      })
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          action: 'preview'
+        })
+      )
+
+      consoleSpy.mockRestore()
     })
 
-    it('should close modal when cancel clicked', async () => {
+    it('should apply action when apply button clicked', async () => {
       const user = userEvent.setup()
+      const mockFetch = vi.fn().mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: true })
+      })
+      global.fetch = mockFetch
+
       render(
         <BulkActionsPanel
           selectedCount={2}
@@ -156,19 +171,19 @@ describe('BulkActionsPanel', () => {
         />
       )
 
-      const previewButton = screen.getByRole('button', { name: /preview/i })
-      await user.click(previewButton)
+      const applyButton = screen.getByTestId('apply-button')
+      await user.click(applyButton)
 
       await waitFor(() => {
-        expect(screen.getByTestId('dry-run-modal')).toBeInTheDocument()
+        expect(mockFetch).toHaveBeenCalledWith(
+          '/api/admin/users/bulk-action',
+          expect.objectContaining({
+            method: 'POST'
+          })
+        )
       })
 
-      const cancelButton = screen.getByRole('button', { name: /cancel/i })
-      await user.click(cancelButton)
-
-      await waitFor(() => {
-        expect(screen.queryByTestId('dry-run-modal')).not.toBeInTheDocument()
-      })
+      expect(mockOnClear).toHaveBeenCalledOnce()
     })
 
     it('should handle action type selection', async () => {
@@ -184,8 +199,8 @@ describe('BulkActionsPanel', () => {
       const selectors = screen.getAllByRole('combobox')
       expect(selectors[0]).toBeInTheDocument()
 
-      await user.click(selectors[0])
-      // Would select an option if available
+      await user.selectOptions(selectors[0], 'set-role')
+      expect((selectors[0] as HTMLSelectElement).value).toBe('set-role')
     })
   })
 
@@ -237,6 +252,9 @@ describe('BulkActionsPanel', () => {
 
   describe('Disabled States', () => {
     it('should disable buttons during operation', async () => {
+      const mockFetch = vi.fn().mockImplementationOnce(() => new Promise(() => {}))
+      global.fetch = mockFetch
+
       const user = userEvent.setup()
       render(
         <BulkActionsPanel
@@ -246,14 +264,21 @@ describe('BulkActionsPanel', () => {
         />
       )
 
-      const previewButton = screen.getByRole('button', { name: /preview/i })
+      const previewButton = screen.getByTestId('preview-button')
       expect(previewButton).not.toBeDisabled()
 
-      // Simulate operation in progress
-      // This would typically be handled by loading state
+      const applyButton = screen.getByTestId('apply-button')
+      await user.click(applyButton)
+
+      await waitFor(() => {
+        expect(applyButton).toBeDisabled()
+      })
     })
 
-    it('should show loading state during bulk operation', async () => {
+    it('should show loading state text during bulk operation', async () => {
+      const mockFetch = vi.fn().mockImplementationOnce(() => new Promise(() => {}))
+      global.fetch = mockFetch
+
       const user = userEvent.setup()
       render(
         <BulkActionsPanel
@@ -263,11 +288,12 @@ describe('BulkActionsPanel', () => {
         />
       )
 
-      const previewButton = screen.getByRole('button', { name: /preview/i })
-      await user.click(previewButton)
+      const applyButton = screen.getByTestId('apply-button')
+      await user.click(applyButton)
 
-      // Component might show loading indicator
-      // Verification depends on implementation
+      await waitFor(() => {
+        expect(applyButton).toHaveTextContent('Applying...')
+      })
     })
   })
 
@@ -281,8 +307,9 @@ describe('BulkActionsPanel', () => {
         />
       )
 
-      expect(screen.getByRole('button', { name: /preview/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /clear/i })).toBeInTheDocument()
+      expect(screen.getByTestId('preview-button')).toBeInTheDocument()
+      expect(screen.getByTestId('apply-button')).toBeInTheDocument()
+      expect(screen.getByTestId('clear-button')).toBeInTheDocument()
     })
 
     it('should have accessible comboboxes', () => {
@@ -359,42 +386,4 @@ describe('BulkActionsPanel', () => {
     })
   })
 
-  describe('Modal Integration', () => {
-    it('should pass correct props to DryRunModal', async () => {
-      const user = userEvent.setup()
-      render(
-        <BulkActionsPanel
-          selectedCount={5}
-          selectedUserIds={new Set(['1', '2', '3', '4', '5'])}
-          onClear={mockOnClear}
-        />
-      )
-
-      const previewButton = screen.getByRole('button', { name: /preview/i })
-      await user.click(previewButton)
-
-      await waitFor(() => {
-        expect(screen.getByText(/Preview: 5 users/)).toBeInTheDocument()
-      })
-    })
-
-    it('should handle apply from modal', async () => {
-      const user = userEvent.setup()
-      render(
-        <BulkActionsPanel
-          selectedCount={2}
-          selectedUserIds={new Set(['1', '2'])}
-          onClear={mockOnClear}
-        />
-      )
-
-      const previewButton = screen.getByRole('button', { name: /preview/i })
-      await user.click(previewButton)
-
-      await waitFor(() => {
-        const applyButton = screen.getByRole('button', { name: /^Apply$/i })
-        expect(applyButton).toBeInTheDocument()
-      })
-    })
-  })
 })

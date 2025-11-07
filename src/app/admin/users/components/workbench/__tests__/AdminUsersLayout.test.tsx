@@ -39,19 +39,20 @@ describe('AdminUsersLayout', () => {
   describe('Rendering', () => {
     it('should render header with quick actions', () => {
       renderWithContext(<AdminUsersLayout />)
-      const header = screen.getByRole('banner') || screen.getByText(/Add User|Import|Bulk|Export/)
+      const header = screen.getByTestId('admin-workbench-header')
       expect(header).toBeInTheDocument()
+      expect(header).toHaveAttribute('role', 'banner')
     })
 
     it('should render main content area', () => {
       renderWithContext(<AdminUsersLayout />)
-      const main = screen.getByRole('main')
+      const main = screen.getByTestId('admin-main-content')
       expect(main).toBeInTheDocument()
     })
 
     it('should render sidebar', () => {
       renderWithContext(<AdminUsersLayout />)
-      const aside = screen.getByRole('complementary')
+      const aside = screen.getByTestId('admin-sidebar')
       expect(aside).toBeInTheDocument()
     })
 
@@ -79,20 +80,15 @@ describe('AdminUsersLayout', () => {
 
   describe('Responsive Behavior', () => {
     it('should render with proper layout structure', () => {
-      const { container } = renderWithContext(<AdminUsersLayout />)
-      const container_el = container.querySelector('.admin-workbench-container')
-      expect(container_el).toBeInTheDocument()
-
-      const header = container.querySelector('.admin-workbench-header')
-      expect(header).toBeInTheDocument()
-
-      const main = container.querySelector('.admin-workbench-main')
-      expect(main).toBeInTheDocument()
+      renderWithContext(<AdminUsersLayout />)
+      expect(screen.getByTestId('admin-workbench-header')).toBeInTheDocument()
+      expect(screen.getByTestId('admin-main-content')).toBeInTheDocument()
+      expect(screen.getByTestId('admin-sidebar')).toBeInTheDocument()
     })
 
-    it('should have sidebar with proper classes', () => {
-      const { container } = renderWithContext(<AdminUsersLayout />)
-      const sidebar = container.querySelector('.admin-workbench-sidebar')
+    it('should have sidebar with proper state', () => {
+      renderWithContext(<AdminUsersLayout />)
+      const sidebar = screen.getByTestId('admin-sidebar')
       expect(sidebar).toBeInTheDocument()
       expect(sidebar).toHaveClass('open')
     })
@@ -130,8 +126,14 @@ describe('AdminUsersLayout', () => {
 
     it('should have proper ARIA landmarks', () => {
       renderWithContext(<AdminUsersLayout />)
-      expect(screen.getByRole('main')).toBeInTheDocument()
-      expect(screen.getByRole('complementary')).toBeInTheDocument()
+      const header = screen.getByTestId('admin-workbench-header')
+      expect(header).toHaveAttribute('role', 'banner')
+
+      const main = screen.getByTestId('admin-main-content')
+      expect(main.tagName).toBe('MAIN')
+
+      const aside = screen.getByTestId('admin-sidebar')
+      expect(aside.tagName).toBe('ASIDE')
     })
 
     it('should have focusable buttons', () => {

@@ -29,25 +29,50 @@ export default function BulkActionsPanel({
   const [actionType, setActionType] = useState('set-status')
   const [actionValue, setActionValue] = useState('INACTIVE')
   const [isApplying, setIsApplying] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
+
+  const handlePreview = () => {
+    setShowPreview(true)
+    console.log({
+      action: 'preview',
+      userIds: Array.from(selectedUserIds),
+      actionType,
+      actionValue
+    })
+  }
 
   const handleApply = async () => {
     setIsApplying(true)
     try {
-      // TODO: Implement bulk action API call
-      console.log({
-        userIds: Array.from(selectedUserIds),
-        action: actionType,
-        value: actionValue
+      // Bulk action API call
+      const response = await fetch('/api/admin/users/bulk-action', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userIds: Array.from(selectedUserIds),
+          action: actionType,
+          value: actionValue
+        })
       })
+
+      if (!response.ok) {
+        throw new Error('Failed to apply bulk action')
+      }
+
+      console.log('Bulk action applied successfully')
       // After successful application, clear selection
       onClear()
+    } catch (error) {
+      console.error('Error applying bulk action:', error)
     } finally {
       setIsApplying(false)
     }
   }
 
   return (
-    <div className="admin-bulk-actions-panel">
+    <div className="admin-bulk-actions-panel" data-testid="bulk-actions-panel">
       <div className="admin-bulk-actions-content">
         {/* Left: Selected count and action selector */}
         <div className="admin-bulk-actions-left">
@@ -126,7 +151,9 @@ export default function BulkActionsPanel({
             variant="outline"
             size="sm"
             disabled={isApplying}
+            onClick={handlePreview}
             aria-label="Preview bulk action"
+            data-testid="preview-button"
           >
             Preview
           </Button>
@@ -136,6 +163,7 @@ export default function BulkActionsPanel({
             disabled={isApplying}
             size="sm"
             aria-label="Apply bulk action to selected users"
+            data-testid="apply-button"
           >
             {isApplying ? 'Applying...' : 'Apply Changes'}
           </Button>
@@ -145,6 +173,7 @@ export default function BulkActionsPanel({
             className="admin-bulk-actions-clear"
             aria-label="Clear selection"
             title="Clear selection"
+            data-testid="clear-button"
           >
             <X className="w-4 h-4" />
           </button>

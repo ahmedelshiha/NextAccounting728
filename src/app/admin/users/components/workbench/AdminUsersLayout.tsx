@@ -52,14 +52,14 @@ export default function AdminUsersLayout() {
   return (
     <div className="admin-workbench-container">
       {/* Sticky Header - Builder.io slot with fallback */}
-      <header className="admin-workbench-header">
+      <header className="admin-workbench-header" role="banner" data-testid="admin-workbench-header">
         {isBuilderEnabled ? <BuilderHeaderSlot /> : <QuickActionsBar />}
       </header>
 
       {/* Main Content Area */}
       <div className="admin-workbench-main">
         {/* Left Sidebar - Analytics & Filters (hidden on tablet/mobile) - Builder.io slot with fallback */}
-        <aside className={`admin-workbench-sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+        <aside className={`admin-workbench-sidebar ${sidebarOpen ? 'open' : 'closed'}`} data-testid="admin-sidebar">
           {isBuilderEnabled ? (
             <BuilderSidebarSlot
               onFilterChange={setFilters}
@@ -74,7 +74,7 @@ export default function AdminUsersLayout() {
         </aside>
 
         {/* Main Content */}
-        <main className="admin-workbench-content">
+        <main className="admin-workbench-content" data-testid="admin-main-content">
           {/* KPI Metric Cards - Builder.io slot with fallback */}
           <div className="admin-workbench-metrics">
             {isBuilderEnabled ? <BuilderMetricsSlot /> : <OverviewCards />}
@@ -98,7 +98,7 @@ export default function AdminUsersLayout() {
 
       {/* Sticky Footer - Bulk Operations (only visible when users selected) - Builder.io slot with fallback */}
       {selectedCount > 0 && (
-        <footer className="admin-workbench-footer">
+        <footer className="admin-workbench-footer" data-testid="bulk-actions-panel">
           {isBuilderEnabled ? (
             <BuilderFooterSlot
               selectedCount={selectedCount}
