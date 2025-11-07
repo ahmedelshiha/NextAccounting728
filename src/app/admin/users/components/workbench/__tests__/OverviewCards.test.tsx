@@ -1,10 +1,19 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { vi, describe, it, beforeEach, expect, afterEach } from 'vitest'
-import OverviewCards from '../OverviewCards'
+import { vi, describe, it, beforeEach, expect } from 'vitest'
+
+// Create mock function first
+const mockUseUsersContext = vi.fn(() => ({
+  users: [],
+  isLoading: false,
+  error: null
+}))
 
 // Setup mocks
-vi.mock('../../contexts/UsersContextProvider')
+vi.mock('../../contexts/UsersContextProvider', () => ({
+  useUsersContext: mockUseUsersContext
+}))
+
 vi.mock('../../OperationsOverviewCards', () => ({
   OperationsOverviewCards: ({ metrics, isLoading }: any) => (
     <div data-testid="operations-overview-cards">
@@ -21,9 +30,7 @@ vi.mock('@/components/ui/skeleton', () => ({
   Skeleton: ({ className }: any) => <div data-testid="skeleton" className={className}>Skeleton</div>
 }))
 
-import { useUsersContext } from '../../../contexts/UsersContextProvider'
-
-const mockUseUsersContext = useUsersContext as any
+import OverviewCards from '../OverviewCards'
 
 describe('OverviewCards', () => {
   beforeEach(() => {
