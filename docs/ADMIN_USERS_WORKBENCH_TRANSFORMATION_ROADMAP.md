@@ -79,17 +79,27 @@
    - Data layer: All React Query hooks functional
    - Performance: Virtualized table supports 10k+ users at 60 FPS
 
-### Next Steps (Phases 6-8)
+### Next Steps (Phase 7-8)
 
-**Phase 6: Builder.io CMS Integration** (Ready to start)
-- BuilderSlots.tsx component created
-- 5 editable slots defined and ready for CMS integration
-- Requires: Builder.io account + plugin configuration
+**Phase 6: Builder.io CMS Integration** ✅ (Code Complete, Manual Setup Pending)
+- ✅ Builder.io config & model definitions complete
+- ✅ Content hook with caching & retry logic implemented
+- ✅ 5 editable CMS slots (header, metrics, sidebar, footer, main)
+- ✅ API endpoint for content fetching
+- ✅ Integration tests (12 test cases)
+- ✅ Complete documentation (4 guides, 571 lines)
+- ⏳ **Pending:** One-time manual setup (30 minutes)
+  - Create Builder.io account
+  - Get API credentials
+  - Set environment variables
+  - Create 5 content models in Builder.io
+  - See [`BUILDER_IO_ENV_SETUP.md`](./BUILDER_IO_ENV_SETUP.md)
 
 **Phase 7: Testing & QA** (Ready to start)
 - Test files scaffolded and ready to run
 - E2E test framework prepared
 - Accessibility audit template in place
+- Builder.io integration tests implemented (12 cases)
 
 **Phase 8: Monitoring & Rollout** (Ready to start)
 - Feature flag infrastructure ready
@@ -349,7 +359,7 @@ src/app/admin/users/
 │   ├── AdminUsersLayout.test.tsx
 │   ├── UsersTable.test.tsx
 │   ├── BulkActionsPanel.test.tsx
-��   ├── e2e-workflows.spec.ts        # Playwright E2E scenarios
+│   ├── e2e-workflows.spec.ts        # Playwright E2E scenarios
 │   └── a11y-audit.test.ts           # Accessibility tests
 └── page.tsx                         # Next.js page entry
 ```
