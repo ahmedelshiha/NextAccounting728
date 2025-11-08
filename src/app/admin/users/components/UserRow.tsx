@@ -82,7 +82,7 @@ const UserRow = memo(function UserRow({
   }
 
   return (
-    <div className="grid grid-cols-[40px_2fr_2fr_1fr_1fr_80px] items-center gap-4 px-4 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors">
+    <div className="grid grid-cols-[40px_2fr_2fr_1fr_1fr_1fr_80px] items-center gap-4 px-4 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors">
       {/* Checkbox */}
       <div className="flex items-center justify-center">
         <Checkbox
@@ -94,7 +94,7 @@ const UserRow = memo(function UserRow({
         />
       </div>
 
-      {/* Name + Email */}
+      {/* Name */}
       <div className="flex items-center gap-3">
         <img
           src={user.avatar || 'https://via.placeholder.com/32'}
@@ -114,21 +114,18 @@ const UserRow = memo(function UserRow({
               aria-label="Edit user name"
             />
           ) : (
-            <>
-              <p
-                className="text-sm font-medium text-gray-900 cursor-text hover:underline"
-                onDoubleClick={() => setIsEditing(true)}
-                title="Double-click to edit"
-              >
-                {user.name}
-              </p>
-              <p className="text-xs text-gray-500 truncate">{user.email}</p>
-            </>
+            <p
+              className="text-sm font-medium text-gray-900 cursor-text hover:underline"
+              onDoubleClick={() => setIsEditing(true)}
+              title="Double-click to edit"
+            >
+              {user.name}
+            </p>
           )}
         </div>
       </div>
 
-      {/* Email (duplicate for grid layout) */}
+      {/* Email */}
       <div className="text-sm text-gray-600 truncate hidden md:block">
         {user.email}
       </div>
@@ -153,6 +150,18 @@ const UserRow = memo(function UserRow({
         >
           {user.status || 'ACTIVE'}
         </span>
+      </div>
+
+      {/* Date Joined */}
+      <div className="text-sm text-gray-600 whitespace-nowrap">
+        {(() => {
+          try {
+            const d = new Date(user.createdAt)
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+          } catch {
+            return user.createdAt
+          }
+        })()}
       </div>
 
       {/* Actions Menu */}
