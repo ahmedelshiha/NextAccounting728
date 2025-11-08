@@ -102,23 +102,37 @@ export default function ClientsList() {
 
   const setRoleBulk = async () => {
     if (!selectedIds.length) return
-    const next = window.prompt(t('prompt.setRole'))?.toUpperCase()
-    if (!next || !hasRole(next, ['ADMIN', 'STAFF', 'CLIENT'])) return
+    setSelectedBulkRole(null)
+    setIsRoleModalOpen(true)
+  }
+
+  const applyRoleBulk = async () => {
+    if (!selectedIds.length || !selectedBulkRole) return
+    const next = selectedBulkRole.toUpperCase()
+    if (!hasRole(next, ['ADMIN', 'STAFF', 'CLIENT'])) return
     for (const id of selectedIds) {
       await apiFetch(`/api/admin/users/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: next }) })
     }
     setSelectedIds([])
+    setIsRoleModalOpen(false)
     await mutate()
   }
 
   const setStatusBulk = async () => {
     if (!selectedIds.length) return
-    const next = window.prompt(t('prompt.setStatus.users'))?.toUpperCase()
+    setSelectedBulkStatus(null)
+    setIsStatusModalOpen(true)
+  }
+
+  const applyStatusBulk = async () => {
+    if (!selectedIds.length || !selectedBulkStatus) return
+    const next = selectedBulkStatus.toUpperCase()
     if (!next || !['ACTIVE','INACTIVE','SUSPENDED'].includes(next)) return
     for (const id of selectedIds) {
       await apiFetch(`/api/admin/users/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: next }) })
     }
     setSelectedIds([])
+    setIsStatusModalOpen(false)
     await mutate()
   }
 
