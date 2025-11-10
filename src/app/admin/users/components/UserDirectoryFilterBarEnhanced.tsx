@@ -119,9 +119,11 @@ export function UserDirectoryFilterBarEnhanced({
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    onFiltersChange({ ...filters, search: value })
+    const next = { ...filters, search: value }
+    onFiltersChange(next)
     setSuggestionsOpen(!!value)
-  }, [filters, onFiltersChange])
+    filterHistory.addEntry(next)
+  }, [filters, onFiltersChange, filterHistory])
 
   const handleSuggestionSelect = useCallback((suggestion: any) => {
     onFiltersChange({ ...filters, search: suggestion.text })
