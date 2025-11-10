@@ -75,15 +75,29 @@ export function UserDirectoryFilterBarEnhanced({
   statusOptions = DEFAULT_STATUS_OPTIONS,
   onClearFilters,
   multiSelect = true,
-  showExport = true
+  showExport = true,
+  showPresets = true,
+  showQuickFilters = true
 }: UserDirectoryFilterBarEnhancedProps) {
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
+  const [presetsOpen, setPresetsOpen] = useState(false)
 
   const { suggestions, isLoading } = useSearchSuggestions(
     allUsers,
     filters.search,
     5
   )
+
+  const {
+    presets,
+    isLoaded: presetsLoaded,
+    createPreset,
+    deletePreset,
+    togglePin,
+    getAllPresets
+  } = useFilterPresets()
+
+  const quickFilters = useMemo(() => createDefaultQuickFilters(), [])
 
   const hasActiveFilters = !!(
     filters.search ||
