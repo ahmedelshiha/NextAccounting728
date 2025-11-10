@@ -38,6 +38,8 @@ export interface UserDirectoryFilterBarEnhancedProps {
   onClearFilters: () => void
   multiSelect?: boolean
   showExport?: boolean
+  showPresets?: boolean
+  showQuickFilters?: boolean
 }
 
 const DEFAULT_ROLE_OPTIONS: FilterOption[] = [
