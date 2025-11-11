@@ -463,6 +463,51 @@ function formatTableValue(value: any, type: string): string {
 }
 
 /**
+ * Generate Excel (TSV) format report
+ */
+export function generateExcelReport(report: Report, data: any): string {
+  const headers = data.columns?.map((col: any) => col.label || col.name) || []
+  const rows = data.rows || []
+
+  // Create TSV (Tab-Separated Values) format for Excel compatibility
+  let tsv = headers.join('\t') + '\n'
+
+  rows.forEach((row: any) => {
+    const values = data.columns?.map((col: any) => {
+      const value = row[col.name] || ''
+      // Escape tabs, newlines, and quotes in values
+      return String(value).replace(/\t/g, ' ').replace(/\n/g, ' ').replace(/"/g, '""')
+    }) || []
+    tsv += values.join('\t') + '\n'
+  })
+
+  return tsv
+}
+
+/**
+ * Generate CSV format report
+ */
+export function generateCSVReport(report: Report, data: any): string {
+  const headers = data.columns?.map((col: any) => `"${col.label || col.name}"`) || []
+  const rows = data.rows || []
+
+  // Create CSV format with proper escaping
+  let csv = headers.join(',') + '\n'
+
+  rows.forEach((row: any) => {
+    const values = data.columns?.map((col: any) => {
+      const value = row[col.name] || ''
+      // Escape quotes and wrap in quotes if contains comma, quote, or newline
+      const strValue = String(value).replace(/"/g, '""')
+      return `"${strValue}"`
+    }) || []
+    csv += values.join(',') + '\n'
+  })
+
+  return csv
+}
+
+/**
  * Calculate summary statistics from data
  */
 export function calculateSummaryStats(
