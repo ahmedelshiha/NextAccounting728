@@ -23,7 +23,7 @@ import '../styles/admin-users-layout.css'
  * Layout structure:
  * ┌─────────────────────────────────────────────┐
  * │        Sticky Header: QuickActionsBar        │
- * ├──────────────┬─────────────────��───────������─┤
+ * ├──────────────┬─────────────────���───────������─┤
  * │              │                            │
  * │   Sidebar    │     Main Content Area      │
  * ���  (Analytics  │   ┌──────────────────��    │
@@ -186,7 +186,6 @@ export default function AdminUsersLayout() {
             />
           ) : (
             <AdminSidebar
-              onFilterChange={setFilters}
               onClose={() => setSidebarOpen(false)}
             />
           )}
