@@ -600,6 +600,16 @@ export const PERMISSION_METADATA: Record<Permission, PermissionMetadata> = {
     icon: 'Lock',
     tags: ['integration', 'secrets', 'security'],
   },
+  [PERMISSIONS.INTEGRATIONS_MANAGE]: {
+    key: PERMISSIONS.INTEGRATIONS_MANAGE,
+    label: 'Manage Integrations',
+    description: 'Full management of filter bar integrations (Slack, Teams, Zapier, Webhooks)',
+    category: PermissionCategory.SYSTEM,
+    risk: RiskLevel.HIGH,
+    dependencies: [PERMISSIONS.INTEGRATION_HUB_VIEW],
+    icon: 'Plug',
+    tags: ['integration', 'manage', 'slack', 'teams', 'zapier', 'webhook'],
+  },
 
   // Client Settings
   [PERMISSIONS.CLIENT_SETTINGS_VIEW]: {
