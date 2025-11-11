@@ -192,7 +192,8 @@ export function UserDirectoryFilterBarEnhanced({
   }, [filters.statuses, statusOptions])
 
   return (
-    <div className="sticky top-0 z-20 bg-white border-b border-gray-200">
+    <>
+      <div className="sticky top-0 z-20 bg-white border-b border-gray-200">
       {/* Main filter row */}
       <div
         className="flex items-center gap-3 p-3 overflow-x-auto"
@@ -384,7 +385,9 @@ export function UserDirectoryFilterBarEnhanced({
         </span>
       </div>
 
-      {/* Filter Presets Menu */}
+      </div>
+
+      {/* Filter Presets Menu - rendered outside sticky container to avoid z-index stacking context issues */}
       {showPresets && presetsLoaded && (
         <FilterPresetsMenu
           presets={getAllPresets()}
@@ -398,7 +401,7 @@ export function UserDirectoryFilterBarEnhanced({
         />
       )}
 
-      {/* Filter History Panel */}
+      {/* Filter History Panel - rendered outside sticky container to avoid z-index stacking context issues */}
       <FilterHistoryPanel
         isOpen={historyOpen}
         onOpenChange={setHistoryOpen}
@@ -408,6 +411,6 @@ export function UserDirectoryFilterBarEnhanced({
         onExportHistory={() => filterHistory.exportHistory()}
         helpers={{ relativeTime: filterHistory.helpers.relativeTime, describeFilters: filterHistory.helpers.describeFilters }}
       />
-    </div>
+    </>
   )
 }
