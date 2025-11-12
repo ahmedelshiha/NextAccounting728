@@ -554,7 +554,7 @@ export class EntityService {
             entityId,
             userId,
             action: "DELETE",
-            changes: { status: entity.status },
+            changes: ({ status: entity.status } as any) as Prisma.InputJsonValue,
           },
         });
 
