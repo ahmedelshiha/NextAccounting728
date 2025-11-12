@@ -257,22 +257,32 @@ export default function NewStartupTab({
               <p className="text-red-600 text-sm -mt-2">{errors.termsAccepted.message}</p>
             )}
 
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitting || isLoading}
-              size="lg"
-            >
-              {isSubmitting || isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Setting up...
-                </>
-              ) : (
-                "Create Business Account"
-              )}
-            </Button>
+            {/* Submit Button - Mobile Swipe or Desktop Click */}
+            {isMobile ? (
+              <SwipeToConfirm
+                text="Swipe to create"
+                successText="Creating..."
+                onSwipeComplete={handleSubmit(onSubmit)}
+                disabled={isSubmitting || isLoading}
+                isLoading={isLoading}
+              />
+            ) : (
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitting || isLoading}
+                size="lg"
+              >
+                {isSubmitting || isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Setting up...
+                  </>
+                ) : (
+                  "Create Business Account"
+                )}
+              </Button>
+            )}
           </form>
         </CardContent>
       </Card>
