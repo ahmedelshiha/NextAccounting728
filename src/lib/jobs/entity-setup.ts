@@ -339,7 +339,7 @@ export async function enqueueVerificationJob(entityId: string): Promise<void> {
  */
 export async function processNextVerificationJob(): Promise<VerificationJobState | null> {
   try {
-    const job = await redis.lpop(JOB_QUEUE);
+    const job = await (redis as any).lpop(JOB_QUEUE);
     if (!job) return null;
 
     const { entityId } = JSON.parse(job as string);
