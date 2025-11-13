@@ -42,7 +42,7 @@ export interface ProcessDefinition {
   version: string;
   status: ProcessStatus;
   steps: ProcessStep[];
-  rules: ProcessRule[];
+  rules?: ProcessRule[];
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
