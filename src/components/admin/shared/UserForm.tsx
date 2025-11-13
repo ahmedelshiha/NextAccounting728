@@ -18,7 +18,19 @@ import { toast } from 'sonner'
 import { UserCreate, UserEdit, UserCreateSchema, UserEditSchema, generateTemporaryPassword } from '@/schemas/users'
 import { Copy, RefreshCw, Mail, Phone, Building, MapPin, Shield, Lock, FileText } from 'lucide-react'
 
-interface BaseUserFormProps {
+interface UserFormProps {
+  /**
+   * Mode: 'create' for new user, 'edit' for existing user
+   * When 'create': initialData should be undefined
+   * When 'edit': initialData should be provided
+   */
+  mode: 'create' | 'edit'
+
+  /**
+   * Initial user data (required for edit mode, omitted for create mode)
+   */
+  initialData?: Partial<UserEdit>
+
   /**
    * Callback when form is submitted
    */
@@ -39,24 +51,6 @@ interface BaseUserFormProps {
    */
   showPasswordGeneration?: boolean
 }
-
-interface CreateUserFormProps extends BaseUserFormProps {
-  /**
-   * Create mode - no initial data required
-   */
-  mode: 'create'
-  initialData?: never
-}
-
-interface EditUserFormProps extends BaseUserFormProps {
-  /**
-   * Edit mode - initial user data required
-   */
-  mode: 'edit'
-  initialData: Partial<UserEdit>
-}
-
-type UserFormProps = CreateUserFormProps | EditUserFormProps
 
 export const UserForm = React.forwardRef<HTMLFormElement, UserFormProps>(
   function UserForm(props, ref) {
